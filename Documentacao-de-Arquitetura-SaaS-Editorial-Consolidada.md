@@ -12,39 +12,6 @@ Sistema multi-tenant white-label para gestão completa da cadeia editorial, cone
 - Conformidade LGPD: consentimento granular, DPO virtual, logs de auditoria, anonimização de dados sensíveis.[^4][^5]
 - Escalabilidade horizontal para picos de processamento IA.
 
-### **Atores editoriais contemplados na arquitetura**
-
-- `AdminEditora`
-- `GestorEditorial`
-- `Financeiro`
-- `Atendimento`
-- `Autor`
-- `RevisorLiterario`
-- `RevisorOrtografico`
-- `Capista`
-- `Ilustrador`
-- `Diagramador`
-- `Marketing`
-- `FreelancerParceiro`
-- `AgenteIA`
-
-### **Roles iniciais sugeridas**
-
-- `AdminEditora`: administração completa do tenant, branding, usuários, integrações, permissões e configurações financeiras.
-- `GestorEditorial`: gestão operacional da esteira editorial, distribuição de tarefas, validação de entregas e acompanhamento do livro.
-- `Autor`: contratação de serviços, envio de artefatos, acompanhamento do fluxo, aprovação de entregas e pagamentos.
-- `RevisorLiterario`: atuação em conteúdo, clareza, estilo e estrutura narrativa.
-- `RevisorOrtografico`: atuação em gramática, ortografia, padronização e normalização textual.
-- `Capista`: criação e revisão de capas e criativos visuais.
-- `Ilustrador`: produção de ilustrações internas, externas e peças gráficas complementares.
-- `Diagramador`: preparação de miolo, PDF final, ebook e arquivos para impressão.
-- `Marketing`: criação e acompanhamento de campanhas e criativos promocionais.
-- `Financeiro`: gestão de cobrança, extratos, repasses, saques e conciliação.
-- `Atendimento`: comunicação operacional, suporte ao autor e acompanhamento de pendências.
-- `FreelancerParceiro`: executor externo com acesso restrito às etapas em que foi alocado.
-- `AgenteIA`: executor sistêmico auditável para etapas automatizadas, sem autenticação humana direta.
-
-
 ***
 
 ## 2. Principais Entidades
@@ -371,6 +338,22 @@ AuditLog
 ├── DataHora
 └── DadosAnonimizados
 ```
+
+### **Roles iniciais sugeridas**
+
+- `AdminEditora`: administração completa do tenant, branding, usuários, integrações, permissões e configurações financeiras.
+- `GestorEditorial`: gestão operacional da esteira editorial, distribuição de tarefas, validação de entregas e acompanhamento do livro.
+- `Autor`: contratação de serviços, envio de artefatos, acompanhamento do fluxo, aprovação de entregas e pagamentos.
+- `RevisorLiterario`: atuação em conteúdo, clareza, estilo e estrutura narrativa.
+- `RevisorOrtografico`: atuação em gramática, ortografia, padronização e normalização textual.
+- `Capista`: criação e revisão de capas e criativos visuais.
+- `Ilustrador`: produção de ilustrações internas, externas e peças gráficas complementares.
+- `Diagramador`: preparação de miolo, PDF final, ebook e arquivos para impressão.
+- `Marketing`: criação e acompanhamento de campanhas e criativos promocionais.
+- `Financeiro`: gestão de cobrança, extratos, repasses, saques e conciliação.
+- `Atendimento`: comunicação operacional, suporte ao autor e acompanhamento de pendências.
+- `FreelancerParceiro`: executor externo com acesso restrito às etapas em que foi alocado.
+- `AgenteIA`: executor sistêmico auditável para etapas automatizadas, sem autenticação humana direta.
 
 ***
 
@@ -755,42 +738,210 @@ Responsável pelo ciclo de compliance, consentimento, retenção, rastreabilidad
 
 ***
 
-## 5. Casos de Uso e Histórias Macro
+## 5. Casos de Uso e Histórias de Usuário em Visão Macro
+
+### **Administrador da Editora**
+
+```text
+Como Administrador da Editora, quero:
+- cadastrar e configurar minha editora como tenant da plataforma;
+- personalizar branding, domínios, identidade visual e configurações operacionais;
+- convidar usuários e atribuir roles e permissões;
+- habilitar ou desabilitar serviços editoriais e serviços de IA;
+- configurar integrações com ERP, gateway de pagamento e provedores externos;
+- acompanhar indicadores operacionais, financeiros e de uso da plataforma;
+- manter trilha de auditoria e governança sobre o tenant.
+```
+
+### **Gestor Editorial**
+
+```text
+Como Gestor Editorial, quero:
+- cadastrar livros e estruturar a esteira editorial de cada projeto;
+- selecionar os serviços necessários para cada obra;
+- distribuir tarefas entre colaboradores internos, parceiros e IA;
+- acompanhar status, prazos, gargalos e dependências entre etapas;
+- revisar entregas, solicitar ajustes e aprovar resultados;
+- manter a operação editorial organizada e previsível.
+```
 
 ### **Autor**
 
-```
-Como autor, quero:
-- Cadastrar livro e escolher serviços (IA ou humano)
-- Acompanhar progresso da esteira em dashboard
-- Conversar com revisor/capista via chat
-- Pagar serviços contratados
-- Baixar ebook/impresso final
-```
-
-
-### **Editora**
-
-```
-Como editora, quero:
-- Cadastrar colaboradores e atribuir roles
-- Configurar quais serviços IA liberar para autores
-- Integrar produtos com meu ERP (Bling)
-- Gerar relatórios de repasse para freelancers
-- Configurar % de comissão por serviço
+```text
+Como Autor, quero:
+- cadastrar meu livro ou manuscrito na plataforma;
+- contratar serviços editoriais avulsos ou em pacote;
+- escolher, quando disponível, entre execução humana, por IA ou híbrida;
+- acompanhar o andamento de cada etapa da produção do meu livro;
+- enviar arquivos, responder dúvidas e interagir com os responsáveis via chat;
+- visualizar valores cobrados, histórico de pagamentos e entregas recebidas;
+- aprovar resultados e baixar os artefatos finais do projeto.
 ```
 
+### **Atendimento / Suporte**
 
-### **Parceiro/Freelancer**
-
+```text
+Como membro do Atendimento, quero:
+- acompanhar solicitações dos autores ao longo do processo editorial;
+- intermediar dúvidas, pendências e alinhamentos entre autor, editora e parceiros;
+- visualizar o contexto do livro, das etapas e das mensagens trocadas;
+- abrir, tratar e encerrar tickets operacionais;
+- garantir que o autor tenha visibilidade e suporte durante toda a jornada.
 ```
-Como revisor, quero:
-- Receber tarefas atribuídas
-- Fazer upload de versão corrigida
-- Conversar com autor via chat
-- Receber pagamento automático
+
+### **Revisor Literário**
+
+```text
+Como Revisor Literário, quero:
+- receber etapas atribuídas a mim com prazo e contexto do livro;
+- acessar o manuscrito e os artefatos relacionados;
+- enviar versões revisadas, comentários e orientações ao autor ou gestor;
+- registrar minha evolução dentro da etapa;
+- concluir a entrega com histórico rastreável.
 ```
 
+### **Revisor Ortográfico**
+
+```text
+Como Revisor Ortográfico, quero:
+- acessar textos enviados para correção gramatical e ortográfica;
+- devolver versões corrigidas com observações e apontamentos;
+- interagir com autor e gestor editorial quando houver dúvidas;
+- registrar entregas de maneira organizada e auditável.
+```
+
+### **Capista**
+
+```text
+Como Capista, quero:
+- receber briefing, referências e materiais do livro;
+- enviar propostas, versões e arquivos finais de capa;
+- discutir ajustes com autor e gestor pelo chat da etapa;
+- concluir a entrega com versionamento e histórico de aprovação.
+```
+
+### **Ilustrador**
+
+```text
+Como Ilustrador, quero:
+- visualizar as demandas visuais atribuídas ao projeto;
+- acessar briefing, referências e requisitos técnicos;
+- publicar versões intermediárias e finais das ilustrações;
+- colaborar com a editora e o autor dentro do contexto do livro.
+```
+
+### **Diagramador**
+
+```text
+Como Diagramador, quero:
+- receber os textos finais e os elementos visuais aprovados;
+- produzir os arquivos diagramados para impressão e ebook;
+- versionar PDFs, EPUBs e demais saídas técnicas;
+- registrar entregas e ajustes até a aprovação final.
+```
+
+### **Marketing / Tráfego**
+
+```text
+Como responsável por Marketing, quero:
+- receber informações do livro e seus diferenciais;
+- gerar campanhas, copys, criativos e peças promocionais;
+- trabalhar com recursos humanos e/ou IA para acelerar produção;
+- acompanhar entregas vinculadas ao lançamento e à divulgação da obra.
+```
+
+### **Financeiro da Editora**
+
+```text
+Como membro do Financeiro, quero:
+- visualizar serviços contratados, valores cobrados e pagamentos recebidos;
+- acompanhar repasses devidos a parceiros e freelancers;
+- operar o modelo financeiro da editora, seja com repasse direto ou saque integral;
+- gerar extratos por livro, serviço, parceiro e período;
+- integrar eventos financeiros ao ERP e manter conciliação adequada.
+```
+
+### **Parceiro / Freelancer**
+
+```text
+Como Parceiro ou Freelancer, quero:
+- acessar apenas as etapas e livros em que fui alocado;
+- receber tarefas, prazos, briefing e materiais necessários;
+- trocar mensagens com os envolvidos na etapa;
+- publicar artefatos e registrar entregas;
+- acompanhar meus valores a receber e o status dos repasses.
+```
+
+### **Agente de IA / Automação Sistêmica**
+
+```text
+Como Agente de IA, o sistema deve:
+- executar tarefas editoriais automatizadas conforme configuração da editora;
+- registrar provider, modelo, prompt, custo, tokens e resultado;
+- gerar artefatos auditáveis e vinculados à etapa correspondente;
+- respeitar limites de uso, políticas de aprovação e regras do tenant;
+- permitir revisão humana posterior quando necessário.
+```
+
+### **Equipe de Compliance / Governança**
+
+```text
+Como responsável por Compliance ou Governança, quero:
+- garantir o registro das bases legais e consentimentos;
+- rastrear ações críticas de usuários e processos automatizados;
+- atender solicitações do titular relativas à LGPD;
+- revisar retenção, anonimização e exposição de dados sensíveis;
+- produzir evidências para auditoria e governança do tratamento de dados.
+```
+
+## **Casos de Uso Macro da Plataforma**
+
+### **1. Implantação e Configuração do Tenant**
+- Cadastro da editora.
+- Criação do primeiro administrador.
+- Definição de branding, serviços, integrações e parâmetros iniciais.
+
+### **2. Gestão de Usuários e Permissões**
+- Convite e cadastro de usuários.
+- Associação de roles e permissões.
+- Restrição de acesso por tenant, livro, etapa e função.
+
+### **3. Gestão de Catálogo Editorial**
+- Cadastro de serviços editoriais ofertados.
+- Definição de preços, SLA, forma de execução e regras de entrega.
+- Configuração de serviços com suporte humano, IA ou híbrido.
+
+### **4. Gestão de Livros e Artefatos**
+- Cadastro do livro e seus metadados.
+- Upload, organização e versionamento de manuscritos e entregáveis.
+- Associação de participantes ao projeto editorial.
+
+### **5. Contratação e Execução de Serviços**
+- Seleção e contratação de serviços pelo autor.
+- Geração das etapas do workflow.
+- Execução por humano, parceiro ou IA.
+- Aprovação, retrabalho e conclusão.
+
+### **6. Comunicação e Atendimento**
+- Chat contextual por livro e por etapa.
+- Atendimento operacional e suporte ao autor.
+- Registro histórico de decisões, pedidos e arquivos.
+
+### **7. Automação com IA**
+- Execução de tarefas automatizadas.
+- Registro auditável das operações realizadas por IA.
+- Aprovação humana opcional ou obrigatória conforme regra da editora.
+
+### **8. Pagamentos, Repasse e Conciliação**
+- Cobrança do autor.
+- Repasses a parceiros.
+- Extratos financeiros e integração com ERP.
+
+### **9. Segurança, LGPD e Auditoria**
+- Controle de acesso.
+- Registro de consentimentos.
+- Atendimento a direitos do titular.
+- Trilha auditável de ações humanas e sistêmicas.
 
 ***
 
@@ -865,10 +1016,9 @@ Como revisor, quero:
 - **Direitos do titular**: download, exclusão, portabilidade via API.
 - **DPO virtual**: logs automáticos + relatórios ANPD.
 
-
 ### **Medidas de segurança**
 
-```
+```text
 🔐 Autenticação: JWT + Refresh Token + 2FA opcional
 🔒 Autorização: RBAC por EditoraId + Role
 🛡️ LGPD: Consentimento armazenado, AuditLog 1 ano, Anonimização PII
@@ -887,42 +1037,41 @@ Como revisor, quero:
 
 **Min 0–5 | Perplexity** (navegador):
 
-```
+```text
 "Monte o próximo slice: [nome]. Liste entidades, APIs, fluxos."
 ```
 
 **Min 5–15 | Gemini Pro** (navegador):
 
-```
+```text
 "Gere: entidades C#, DTOs, docker-compose, controller skeleton."
 ```
 
 **Min 15–25 | Copilot + Gemini Code Assist** (VS Code):
 
-```
+```text
 Comentários em inglês → // create controller for [feature]
 TAB → aceitar sugestão → ajustar.
 ```
 
 **Min 25–30 | Perplexity** (revisão):
 
-```
+```text
 "Revise este código [colar] e sugira melhorias LGPD/performance."
 ```
-
 
 ### **Prompts reutilizáveis**
 
 **Perplexity (planejamento)**:
 
-```
+```text
 "SaaS editorial multi-tenant .NET 8 + Angular + Postgres.
 Próximo slice: [NOME]. Entidades, APIs, fluxos, LGPD."
 ```
 
 **Gemini (geração)**:
 
-```
+```text
 "Gere código .NET 8 para [entidade/controller]:
 - Multi-tenant EditoraId
 - LGPD compliant
@@ -931,7 +1080,7 @@ Próximo slice: [NOME]. Entidades, APIs, fluxos, LGPD."
 
 **Copilot (implementação)**:
 
-```
+```text
 // Create [controller/service] with EditoraId filter
 // Use IPasswordHasher, SaveChangesAsync transaction
 // Return Created with Id
@@ -939,44 +1088,15 @@ Próximo slice: [NOME]. Entidades, APIs, fluxos, LGPD."
 
 Essa combinação te dá **arquitetura sólida + desenvolvimento 3x mais rápido** mantendo qualidade e conformidade.[^8][^9][^10]
 
-Quer o próximo passo detalhado para o **slice 1: Onboarding** com prompts prontos?
-<span style="display:none">[^11][^12][^13][^14][^15][^16][^17][^18]</span>
-
 <div align="center">⁂</div>
 
 [^1]: https://books.google.com.br/books?id=bhsEEQAAQBAJ
-
 [^2]: https://aws.amazon.com/pt/blogs/aws-brasil/criando-uma-solucao-saas-multi-tenant-usando-o-amazon-eks/
-
 [^3]: https://frontegg.com/resources/the-complete-guide-to-saas-multi-tenant-architecture
-
 [^4]: https://complydog.com/blog/brazil-lgpd-complete-data-protection-compliance-guide-saas
-
 [^5]: https://affise.com/lgpd/
-
 [^6]: https://desenvolvedor.io/blog/desvendando-os-bounded-contexts-aplicando-ddd-em-projetos-reais
-
 [^7]: https://oneuptime.com/blog/post/2026-02-17-how-to-implement-domain-driven-design-bounded-contexts-as-microservices-on-gcp/view
-
 [^8]: https://www.linkedin.com/posts/adevofc_copilot-vs-gemini-code-assist-adev-blog-activity-7428717092025278464-dC9M
-
 [^9]: https://www.secondtalent.com/resources/ai-code-assistants-for-visual-studio-code/
-
 [^10]: https://angular.dev/ai/develop-with-ai
-
-[^11]: https://workos.com/blog/developers-guide-saas-multi-tenant-architecture
-
-[^12]: https://clerk.com/blog/how-to-design-multitenant-saas-architecture
-
-[^13]: https://website-gbkwwb.manus.space
-
-[^14]: https://zenn.dev/shineos/articles/saas-multi-tenant-architecture-2025?locale=en
-
-[^15]: https://dotnetwisdom.co.uk/2025/06/03/building-multi-tenant-saas-applications-with-asp-net-core-net-8-and-ci-cd-best-practices/
-
-[^16]: https://aws.amazon.com/blogs/architecture/lets-architect-building-multi-tenant-saas-systems/
-
-[^17]: https://www.linkedin.com/posts/prafull-sharma-0222b71a5_multitenant-saas-aspnetcore-activity-7362380590173577216-5mtJ
-
-[^18]: https://bigid.com/pt/compliance/lgpd/
-
