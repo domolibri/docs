@@ -177,3 +177,137 @@ Utilize os prompts abaixo para implementar a rastreabilidade e auditoria:
 > 2. Verifique se o `AuditInterceptor` está lidando corretamente com transações para evitar que uma falha no log impeça o salvamento dos dados principais (ou vice-versa, dependendo da criticidade).
 > 3. Certifique-se de que a serialização JSON para `DadosOriginais` e `DadosNovos` ignore propriedades marcadas como sensíveis.
 
+### 2.3. Base de Consentimento LGPD (Épico E12)
+
+Utilize os prompts abaixo para implementar o fluxo de consentimento:
+
+### Prompt 1: Criação da Entidade de Consentimento LGPD (Domain)
+> **Contexto:** Estou implementando a base de consentimento LGPD no projeto DomoLibri para garantir conformidade legal durante o registro de usuários.
+>
+> **Tarefa:**
+> 1. No projeto `DomoLibri.Domain/Entities`, crie a entidade `ConsentimentoLGPD`:
+>    - Propriedades: `Id` (Guid), `EditoraId` (Guid), `UsuarioId` (Guid), `TipoConsentimento` (string - ex: "TermosDeUso", "ComunicacaoMarketing"), `VersaoTermo` (string), `DataConsentimento` (DateTime).
+> 2. No `DomoLibriDbContext.cs`:
+>    - Adicione o `DbSet<ConsentimentoLGPD> ConsentimentosLGPD`.
+>    - Configure a entidade: Chave primária, indexação por `UsuarioId` e `EditoraId`.
+>    - Aplique o Filtro Global de Multi-tenancy (`EditoraId`) na entidade `ConsentimentoLGPD`.
+>
+> **Padrão:** Mantenha a consistência com as outras entidades do domínio e use `DateTime.UtcNow` para a data de consentimento.
+
+### Prompt 2: Refatoração do Fluxo de Registro para Capturar Consentimento (Application/DTOs)
+> **Contexto:** O formulário de registro agora exige que o usuário aceite os Termos de Uso. Preciso atualizar o DTO e o serviço de autenticação.
+>
+> **Tarefa:**
+> 1. No `DomoLibri.Application/DTOs`, atualize o `RegisterDto` (ou equivalente) para incluir uma propriedade booleana `AceitouTermos`.
+> 2. No `AuthService.cs`, método `RegisterAsync`:
+>    - Valide se `AceitouTermos` é verdadeiro. Caso contrário, retorne um erro de validação.
+>    - Após a criação bem-sucedida do `UsuarioEditora`, crie um registro na tabela `ConsentimentoLGPD` vinculando o `UsuarioId`, `EditoraId`, o tipo "TermosDeUso" e a versão atual dos termos (ex: "1.0").
+> 3. Garanta que a operação de criação do usuário e do consentimento ocorra dentro de uma transação (se aplicável) ou de forma atômica.
+>
+> **Regra:** O registro não deve prosseguir sem o consentimento explícito dos termos de uso.
+
+### Prompt 3: Interface de Consentimento no Frontend (Frontend)
+> **Contexto:** Preciso adicionar a interface de consentimento LGPD no formulário de registro do Angular.
+>
+> **Tarefa:**
+> 1. No `frontend/src/app/onboarding/register/register.html`:
+>    - Adicione um checkbox obrigatório com o rótulo "Aceito os Termos de Uso e Política de Privacidade".
+>    - Adicione links (placeholders) para os documentos de "Termos de Uso" e "Política de Privacidade".
+> 2. No `register.ts`:
+>    - Adicione o controle `aceitouTermos` ao `FormGroup` de registro com validação `Validators.requiredTrue`.
+>    - Atualize a chamada ao `onboardingService.register` para enviar o novo campo.
+> 3. No `onboarding.service.ts`:
+>    - Atualize a interface/modelo de dados de registro para incluir o campo `aceitouTermos`.
+>
+> **UX:** O botão de "Registrar" deve permanecer desabilitado ou exibir erro se o checkbox não estiver marcado.
+
+### Prompt 4: Migração e Finalização (Infra)
+> **Contexto:** Finalizamos a implementação do fluxo de consentimento.
+>
+> **Tarefa:**
+> 1. Gere uma nova migração do EF Core chamada `AddLGPDConsent`.
+> 2. Verifique se o banco de dados reflete corretamente o relacionamento entre `UsuarioEditora` e seus `ConsentimentosLGPD`.
+> 3. Execute um teste ponta-a-ponta no fluxo de registro para garantir que o consentimento está sendo gravado corretamente no banco após o sucesso no Frontend.
+
+---
+
+## 6. Guia de Implementação (Prompts para Copilot)
+
+### 3.1. Dashboard e Branding
+
+Utilize os prompts abaixo para refinar a experiência visual e as informações do usuário:
+
+### Prompt 1: Refinamento de Branding e Variáveis CSS (Frontend)
+> **Contexto:** O sistema já suporta a definição de uma cor primária via branding, mas precisamos garantir que ela seja aplicada de forma consistente em toda a aplicação usando variáveis CSS de runtime.
+>
+> **Tarefa:**
+> 1. No arquivo `frontend/src/styles.scss`, refine a declaração da variável `--cor-primaria`.
+> 2. Crie variações baseadas na cor primária (ex: `--cor-primaria-hover`, `--cor-primaria-alpha`) usando funções de cor do CSS ou calculando-as no `AuthService.ts` se necessário.
+> 3. Varra os componentes principais (`register.scss`, `login.scss`, `dashboard.scss`) e substitua cores hardcoded (como o azul `#4f46e5`) pelo uso de `var(--cor-primaria)`.
+> 4. Certifique-se de que o `AuthService.applyBranding` continue injetando a cor correta no `:root`.
+>
+> **Objetivo:** Garantir que, ao trocar a cor da editora, botões, links e destaques mudem automaticamente sem recarregar a página.
+
+### Prompt 2: Refatoração do AppShell e Exibição de Perfil (Frontend)
+> **Contexto:** O `AppShell` atual exibe apenas o nome e o avatar. Preciso que ele exiba de forma elegante o nome da Editora e a Role do usuário logado.
+>
+> **Tarefa:**
+> 1. No `frontend/src/app/shared/app-shell/app-shell.html`:
+>    - Adicione o nome da editora (`user.nomeEditora`) próximo ao logo ou nome do sistema.
+>    - Abaixo do nome do usuário, exiba a Role (ex: "Administrador", "Autor"). Como o usuário pode ter múltiplas roles, exiba a principal ou uma lista separada por vírgula.
+> 2. No `app-shell.scss`, ajuste o layout do cabeçalho para acomodar essas novas informações sem quebrar em telas menores (use `flex-box` e `text-overflow`).
+> 3. Garanta que o `AuthService` esteja carregando essas informações corretamente no `currentUser$`.
+>
+> **UX:** O nome da editora deve ter um peso visual secundário, enquanto a Role deve ser exibida como um pequeno "badge" ou texto discreto abaixo do nome do usuário.
+
+### 3.2. Fluxo de Convite (Transição para Slice 2)
+
+Utilize os prompts abaixo para preparar a infraestrutura de convites:
+
+### Prompt 1: Criação da Entidade de Convite (Domain)
+> **Contexto:** Estou preparando a base para o Slice 2 (Gestão de Usuários) e preciso de uma entidade para gerenciar convites de novos colegas para a editora.
+>
+> **Tarefa:**
+> 1. No projeto `DomoLibri.Domain/Entities`, crie a entidade `ConviteUsuario`:
+>    - Propriedades: `Id` (Guid), `EditoraId` (Guid), `Email` (string), `RoleId` (Guid), `Token` (string), `DataCriacao` (DateTime), `DataExpiracao` (DateTime), `Status` (Enum: `Pendente`, `Aceito`, `Expirado`, `Cancelado`), `ConvidadoPorUsuarioId` (Guid).
+> 2. No `DomoLibriDbContext.cs`:
+>    - Adicione o `DbSet<ConviteUsuario> Convites`.
+>    - Configure a entidade: Chave primária, indexação por `Token` (único) e `Email` (por editora).
+>    - Aplique o Filtro Global de Multi-tenancy (`EditoraId`).
+>    - Configure os relacionamentos com `Editora`, `Role` e `UsuarioEditora` (quem convidou).
+>
+> **Padrão:** Siga as convenções de isolamento de dados e auditoria já estabelecidas no projeto.
+
+### Prompt 2: Serviço de Convite e Envio de E-mail (Application/Infrastructure)
+> **Contexto:** Preciso de um serviço que gere o convite e envie o e-mail para o novo colega.
+>
+> **Tarefa:**
+> 1. Crie um `InvitationService` no projeto `DomoLibri.Application/Services`.
+> 2. Implemente o método `InviteUserAsync(string email, Guid roleId)`:
+>    - Valide se o e-mail já possui um convite pendente ou se já é um usuário da editora.
+>    - Gere um token seguro e único.
+>    - Persista o `ConviteUsuario` no banco de dados.
+>    - Envie um e-mail usando o `IEmailService` (já existente) contendo um link para o registro/aceite do convite (ex: `/register?token=XYZ`).
+> 3. Certifique-se de que a operação seja registrada no `AuditLog`.
+>
+> **Regra:** O convite deve expirar em 48 horas por padrão.
+
+### Prompt 3: Componente "Adicionar Colega" (Frontend)
+> **Contexto:** Logo após o onboarding (ou no dashboard), o usuário deve ver um botão rápido para convidar colegas.
+>
+> **Tarefa:**
+> 1. No Dashboard (`frontend/src/app/onboarding/dashboard`), adicione um botão ou pequeno card "Convidar Colega".
+> 2. Ao clicar, abra um modal simples com um campo de e-mail e um select de Roles (carregando as roles da editora via API).
+> 3. Integre com o `OnboardingService` (ou crie um novo `UserService`) para chamar o endpoint de convite.
+> 4. Adicione feedback visual (toast/snackbar) de sucesso ou erro.
+>
+> **Interface:** O formulário deve ser limpo e focado, seguindo a estética do restante do onboarding.
+
+### Prompt 4: Migração e Teste (Infra)
+> **Contexto:** Finalizamos a estrutura base de convites.
+>
+> **Tarefa:**
+> 1. Gere uma nova migração do EF Core chamada `AddUserInvitations`.
+> 2. Verifique se o e-mail enviado pelo Mailpit contém o link correto e o token gerado.
+> 3. Valide se o filtro de multi-tenancy impede que uma editora veja convites de outra.
+
